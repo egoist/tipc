@@ -1,0 +1,55 @@
+{
+  "name": "@egoist/typed-rpc",
+  "version": "0.1.0",
+  "description": "",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tsup src/main.ts src/renderer.ts src/react-query.ts --format esm,cjs",
+    "dev-main": "pnpm build --watch",
+    "dev-types": "tsc --watch",
+    "dev": "run-p dev-main dev-types",
+    "prepublishOnly": "npm run build"
+  },
+  "exports": {
+    "./main": {
+      "types": "./types/main.d.ts",
+      "require": "./dist/main.cjs",
+      "default": "./dist/main.js"
+    },
+    "./renderer": {
+      "types": "./types/renderer.d.ts",
+      "require": "./dist/renderer.cjs",
+      "default": "./dist/renderer.js"
+    },
+    "./react-query": {
+      "types": "./types/react-query.d.ts",
+      "require": "./dist/react-query.cjs",
+      "default": "./dist/react-query.js"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tanstack/react-query": "^5.32.1",
+    "electron": "^30.0.0",
+    "npm-run-all": "^4.1.5",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.32.1",
+    "electron": ">=26.0.0"
+  },
+  "optionalDependencies": {
+    "@tanstack/react-query": "^5.32.1"
+  }
+}
