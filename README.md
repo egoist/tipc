@@ -92,6 +92,18 @@ sumQuery.data // 3 or undefined
 sumQuery.isLoading // boolean
 ```
 
+### Access `sender` in RPC methods
+
+```ts
+export const router = {
+  hello: rpc.procedure.action(async ({ context }) => {
+    // sender is a WebContents instance that is calling this method
+    context.sender.send("some-event")
+    return `Hello, ${input.name}`
+  }),
+}
+```
+
 ## License
 
 MIT.
