@@ -43,7 +43,6 @@ export const createEventHandlers = <T extends RendererHandlers>({
         handle: (handler: any) => {
           return on(prop.toString(), async (event, id: string, ...args) => {
             try {
-              console.log(event)
               const result = await handler(...args)
               send(id, { result })
             } catch (error) {
