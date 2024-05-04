@@ -1,14 +1,17 @@
 {
   "name": "@egoist/tipc",
   "version": "0.2.0",
-  "description": "",
+  "description": "Typesafe IPC for Electron",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "type": "module",
   "files": [
     "dist",
-    "types"
+    "types",
+    "/main",
+    "/react-query",
+    "/renderer"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -20,17 +23,14 @@
   },
   "exports": {
     "./main": {
-      "types": "./types/main.d.ts",
       "require": "./dist/main.cjs",
       "default": "./dist/main.js"
     },
     "./renderer": {
-      "types": "./types/renderer.d.ts",
       "require": "./dist/renderer.cjs",
       "default": "./dist/renderer.js"
     },
     "./react-query": {
-      "types": "./types/react-query.d.ts",
       "require": "./dist/react-query.cjs",
       "default": "./dist/react-query.js"
     }

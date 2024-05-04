@@ -8,7 +8,6 @@
     "src/preload/*.d.ts"
   ],
   "compilerOptions": {
-    "moduleResolution": "Bundler",
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
