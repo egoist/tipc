@@ -1,15 +1,30 @@
 import Versions from "./components/Versions"
 import electronLogo from "./assets/electron.svg"
-import { client } from "./client"
+import { client, handlers } from "./client"
+import { useEffect, useState } from "react"
 
 function App() {
   const sumQuery = client.sum.useQuery({ a: 1, b: 2 })
   const pkgQuery = client.readPkg.useQuery()
+  const [title, setTitle] = useState("")
 
   const utils = client.useUtils()
 
+  useEffect(() => {
+    const unsubscribe = handlers.setTitle.listen((title) => {
+      setTitle(title)
+    })
+
+    return unsubscribe
+  }, [])
+
+  useEffect(() => {
+    handlers.getUserAgent.handle(() => window.navigator.userAgent)
+  }, [])
+
   return (
     <>
+      <h1>{title}</h1>
       <img alt="logo" className="logo" src={electronLogo} />
 
       <div className="actions">
