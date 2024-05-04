@@ -19,7 +19,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    handlers.getUserAgent.handle(() => window.navigator.userAgent)
+    return handlers.getUserAgent.handle(() => window.navigator.userAgent)
   }, [])
 
   return (

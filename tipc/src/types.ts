@@ -22,7 +22,7 @@ export type RendererHandlers = Record<string, (...args: any[]) => any>
 
 export type RendererHandlersListener<T extends RendererHandlers> = {
   [K in keyof T]: {
-    listen: (handler: T[K]) => () => void
+    listen: (handler: (...args: Parameters<T[K]>) => void) => () => void
 
     handle: (handler: T[K]) => () => void
   }
