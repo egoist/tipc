@@ -1,22 +1,22 @@
 import fs from "fs"
-import { initRPC } from "@egoist/typed-rpc/main"
+import { tipc } from "@egoist/tipc/main"
 
-const rpc = initRPC.create()
+const t = tipc.create()
 
 export const router = {
-  logSomething: rpc.procedure
+  logSomething: t.procedure
     .input<{ text: string }>()
     .action(async ({ input }) => {
       console.log(input.text)
     }),
 
-  sum: rpc.procedure
+  sum: t.procedure
     .input<{ a: number; b: number }>()
     .action(async ({ input }) => {
       return input.a + input.b
     }),
 
-  readPkg: rpc.procedure.action(async () => {
+  readPkg: t.procedure.action(async () => {
     return fs.readFileSync("package.json", "utf-8")
   }),
 }

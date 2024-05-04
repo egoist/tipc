@@ -14,9 +14,9 @@ importers:
 
   example:
     dependencies:
-      '@egoist/typed-rpc':
+      '@egoist/tipc':
         specifier: workspace:*
-        version: link:../typed-rpc
+        version: link:../tipc
       '@electron-toolkit/preload':
         specifier: ^3.0.0
         version: 3.0.1(electron@30.0.2)
@@ -79,7 +79,7 @@ importers:
         specifier: ^5.0.12
         version: 5.2.11(@types/node@18.19.31)
 
-  typed-rpc:
+  tipc:
     optionalDependencies:
       '@tanstack/react-query':
         specifier: ^5.32.1
@@ -87,7 +87,7 @@ importers:
     devDependencies:
       electron:
         specifier: ^30.0.0
-        version: 30.0.0
+        version: 30.0.2
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -1299,11 +1299,6 @@ packages:
     peerDependenciesMeta:
       '@swc/core':
         optional: true
-
-  electron@30.0.0:
-    resolution: {integrity: sha512-GRwKphq/TUhSlb44OwSckXKl50f5OR/pm9MvF3rBLyqcxwfu7L11xejrZ0hDea1eKyCkzGd4B+cIqaQiDguPEA==}
-    engines: {node: '>= 12.20.55'}
-    hasBin: true
 
   electron@30.0.2:
     resolution: {integrity: sha512-zv7T+GG89J/hyWVkQsLH4Y/rVEfqJG5M/wOBIGNaDdqd8UV9/YZPdS7CuFeaIj0H9LhCt95xkIQNpYB/3svOkQ==}
@@ -4154,14 +4149,6 @@ snapshots:
       magic-string: 0.30.10
       picocolors: 1.0.0
       vite: 5.2.11(@types/node@18.19.31)
-    transitivePeerDependencies:
-      - supports-color
-
-  electron@30.0.0:
-    dependencies:
-      '@electron/get': 2.0.3
-      '@types/node': 20.12.7
-      extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
 

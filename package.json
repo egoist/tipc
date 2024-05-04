@@ -2,7 +2,7 @@
   "private": true,
   "name": "workspace",
   "scripts": {
-    "dev": "pnpm --filter typed-rpc dev"
+    "dev": "pnpm --filter tipc dev"
   },
   "devDependencies": {
     "electron": "^30.0.2"

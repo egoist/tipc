@@ -1,11 +1,11 @@
-# @egoist/typed-rpc
+# @egoist/tipc
 
-Typed RPC for Electron Apps.
+Typed IPC communication for Electron Apps.
 
 ## Install
 
 ```bash
-npm i @egoist/typed-rpc
+npm i @egoist/tipc
 ```
 
 ## Usage
@@ -13,14 +13,14 @@ npm i @egoist/typed-rpc
 Create an RPC router:
 
 ```ts
-// main/rpc.ts
+// main/tipc.ts
 import fs from "fs"
-import { initRPC } from "@egoist/typed-rpc/main"
+import { tipc } from "@egoist/tipc/main"
 
-const rpc = initRPC.create()
+const t = tipc.create()
 
 export const router = {
-  sum: rpc.procedure
+  sum: t.procedure
     .input<{ a: number; b: number }>()
     .action(async ({ input }) => {
       return input.a + input.b
@@ -34,8 +34,8 @@ In Electron main process:
 
 ```ts
 // main/index.ts
-import { registerIpcMain } from "@egoist/typed-rpc/main"
-import { router } from "./rpc"
+import { registerIpcMain } from "@egoist/tipc/main"
+import { router } from "./tipc"
 
 registerIpcMain(router)
 ```
@@ -44,8 +44,8 @@ In Electron renderer, create a RPC client:
 
 ```ts
 // renderer/client.ts
-import { createClient } from "@egoist/typed-rpc/renderer"
-import { Router } from "../main/rpc"
+import { createClient } from "@egoist/tipc/renderer"
+import { Router } from "../main/tipc"
 
 export const client = createClient<Router>({
   // pass ipcRenderer.invoke function to the client
@@ -67,8 +67,8 @@ Replace the `renderer/client.ts` with the following code:
 
 ```ts
 //renderer/client.ts
-import { createClient } from "@egoist/typed-rpc/react-query"
-import { Router } from "../main/rpc"
+import { createClient } from "@egoist/tipc/react-query"
+import { Router } from "../main/tipc"
 
 export const client = createClient<Router>({
   ipcInvoke: window.electron.ipcRenderer.invoke,

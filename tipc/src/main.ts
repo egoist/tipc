@@ -15,7 +15,7 @@ const createChainFns = <TInput>() => {
   }
 }
 
-const initRPC = {
+const tipc = {
   create() {
     return {
       procedure: createChainFns<void>(),
@@ -23,7 +23,7 @@ const initRPC = {
   },
 }
 
-export { initRPC }
+export { tipc }
 
 export const registerIpcMain = (router: RouterType) => {
   for (const [name, route] of Object.entries(router)) {
