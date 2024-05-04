@@ -2,8 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from "electron"
 import { join } from "path"
 import { electronApp, optimizer, is } from "@electron-toolkit/utils"
 import icon from "../../resources/icon.png?asset"
-import { registerIpcMain } from "@egoist/tipc/main"
-import { router } from "./tipc"
+import { registerIpcMain, getRendererHandlers } from "@egoist/tipc/main"
+import { router, RendererHandlers } from "./tipc"
 
 function createWindow(): void {
   // Create the browser window.
@@ -21,6 +21,14 @@ function createWindow(): void {
 
   mainWindow.on("ready-to-show", () => {
     mainWindow.show()
+
+    const handlers = getRendererHandlers<RendererHandlers>(
+      mainWindow.webContents,
+    )
+
+    handlers.setTitle.send("title from main!!!")
+
+    handlers.getUserAgent.invoke().then(console.log).catch(console.error)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

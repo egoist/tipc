@@ -8,7 +8,7 @@ Typed IPC communication for Electron Apps.
 npm i @egoist/tipc
 ```
 
-## Usage
+## Calling main from renderer
 
 Create a TIPC router:
 
@@ -51,7 +51,7 @@ import { Router } from "../main/tipc"
 export const client = createClient<Router>({
   // pass ipcRenderer.invoke function to the client
   // you can expose it from preload.js in BrowserWindow
-  ipcInvoke: window.electron.ipcRenderer.invoke,
+  ipcInvoke: window.ipcRenderer.invoke,
 })
 ```
 
@@ -72,7 +72,7 @@ import { createClient } from "@egoist/tipc/react-query"
 import { Router } from "../main/tipc"
 
 export const client = createClient<Router>({
-  ipcInvoke: window.electron.ipcRenderer.invoke,
+  ipcInvoke: window.ipcRenderer.invoke,
 })
 ```
 
@@ -103,6 +103,92 @@ export const router = {
     return `Hello, ${input.name}`
   }),
 }
+```
+
+## Calling renderer from main
+
+Define event handlers type for the renderer:
+
+```ts
+// main/renderer-handlers.ts
+export type RendererHandlers = {
+  helloFromMain: (message: string) => void
+}
+```
+
+Send events from main to renderer:
+
+```ts
+// main/index.ts
+import { getRendererHandlers } from "@egoist/tipc/main"
+import { RendererHandlers } from "./renderer-handlers"
+
+const window = new BrowserWindow({})
+
+const handlers = getRendererHandlers<RendererHandlers>(window.webContents)
+
+handlers.helloFromMain.send("Hello from main!")
+```
+
+But you also need to listen to events in renderer:
+
+```ts
+// renderer/tipc.ts
+import { createHandlers } from "@egoist/tipc/renderer"
+import { RendererHandlers } from "../main/renderer-handlers"
+
+const handlers = createHandlers<RendererHandlers>({
+  // when using electron's ipcRenderer directly
+  on: (channel, callback) => {
+    window.ipcRenderer.on(channel, callback)
+    return () => {
+      window.ipcRenderer.off(channel, callback)
+    }
+  },
+
+  // otherwise if using @electron-toolkit/preload or electron-vite
+  // which expose a custom `on` method that does the above for you
+  // on: window.electron.ipcRenderer.on,
+
+  send: window.ipcRenderer.send,
+})
+```
+
+Let's say you're using React, you can now listen to events in your component:
+
+```tsx
+//renderer/app.tsx
+import { handlers } from "./tipc"
+
+useEffect(() => {
+  const unlisten = handlers.helloFromMain.on((message) => {
+    console.log(message)
+  })
+
+  return unlisten
+}, [])
+```
+
+### Get response from renderer
+
+The `.send` method only send a message to renderer, if you want to get a response from renderer, you can use `.invoke` method:
+
+```ts
+// main/index.ts
+const handlers = getRendererHandlers<RendererHandlers>(window.webContents)
+
+handlers.calculateInRenderer.invoke(1, 2).then(console.log)
+```
+
+```tsx
+// renderer/app.tsx
+useEffect(() => {
+  const unlisten = handlers.calculateInRenderer.handle((left, right) => {
+    return left + right
+  })
+
+  return unlisten
+}, [])
 ```
 
 ## License

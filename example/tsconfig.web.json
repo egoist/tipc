@@ -11,6 +11,7 @@
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "@renderer/*": ["src/renderer/src/*"]
     }

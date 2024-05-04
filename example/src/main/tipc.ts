@@ -22,3 +22,9 @@ export const router = {
 }
 
 export type Router = typeof router
+
+export type RendererHandlers = {
+  setTitle: (title: string) => void
+
+  getUserAgent: () => string
+}
