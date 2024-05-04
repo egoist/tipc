@@ -28,7 +28,7 @@ function createWindow(): void {
 
     handlers.setTitle.send("title from main!!!")
 
-    handlers.getUserAgent.invoke().then(console.log)
+    handlers.getUserAgent.invoke().then(console.log).catch(console.error)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

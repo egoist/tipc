@@ -19,7 +19,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    return handlers.getUserAgent.handle(() => window.navigator.userAgent)
+    return handlers.getUserAgent.handle(() => {
+      // error works too
+      // throw new Error("not implemented")
+      return window.navigator.userAgent
+    })
   }, [])
 
   return (
