@@ -14,7 +14,6 @@ Create a TIPC router:
 
 ```ts
 // main/tipc.ts
-import fs from "fs"
 import { tipc } from "@egoist/tipc/main"
 
 const t = tipc.create()
