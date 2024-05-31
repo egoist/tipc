@@ -1,9 +1,14 @@
-import { createClient } from "@egoist/tipc/react-query"
-import { createEventHandlers } from "@egoist/tipc/renderer"
+import { createClient as createReactClient } from "@egoist/tipc/react-query"
+import { createEventHandlers, createClient } from "@egoist/tipc/renderer"
 import { Router, RendererHandlers } from "../../main/tipc"
+
+export const reactClient = createReactClient<Router>({
+  ipcInvoke: window.electron.ipcRenderer.invoke,
+})
 
 export const client = createClient<Router>({
   ipcInvoke: window.electron.ipcRenderer.invoke,
+  ipcOn: window.electron.ipcRenderer.on,
 })
 
 export const handlers = createEventHandlers<RendererHandlers>({

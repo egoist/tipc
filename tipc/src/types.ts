@@ -2,19 +2,30 @@ export type ActionContext = {
   sender: Electron.WebContents
 }
 
-export type ActionFunction<TInput = any, TResult = any> = (args: {
+export type ActionPromiseFunction<TInput = void, TResult = any> = (args: {
   context: ActionContext
   input: TInput
 }) => Promise<TResult>
 
+export type ActionGeneratorFunction<TInput = void, TResult = any> = (args: {
+  context: ActionContext
+  input: TInput
+}) => AsyncGenerator<TResult, any, unknown>
+
+export type ActionFunction<TInput = void, TResult = any> =
+  | ActionPromiseFunction<TInput, TResult>
+  | ActionGeneratorFunction<TInput, TResult>
+
 export type RouterType = Record<string, { action: ActionFunction }>
 
 export type ClientFromRouter<Router extends RouterType> = {
-  [K in keyof Router]: Router[K]["action"] extends (options: {
-    context: any
-    input: infer P
-  }) => Promise<infer R>
-    ? (input: P) => Promise<R>
+  [K in keyof Router]: Router[K]["action"] extends ActionGeneratorFunction<
+    infer P,
+    infer R
+  >
+    ? (input: P extends unknown ? void : P) => Promise<ReadableStream<R>>
+    : Router[K]["action"] extends ActionPromiseFunction<infer P, infer R>
+    ? (input: P extends unknown ? void : P) => Promise<R>
     : never
 }
 

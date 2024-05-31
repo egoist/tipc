@@ -1,12 +1,16 @@
-import { ActionFunction } from "./types"
+import {
+  ActionGeneratorFunction,
+  ActionPromiseFunction,
+  ActionFunction,
+} from "./types"
 
-const createChainFns = <TInput>() => {
+const createChainFns = <TInput = void>() => {
   return {
     input<TInput>() {
       return createChainFns<TInput>()
     },
 
-    action: <TResult>(action: ActionFunction<TInput, TResult>) => {
+    action: <TResult, T extends ActionFunction<TInput, TResult>>(action: T) => {
       return {
         action,
       }
