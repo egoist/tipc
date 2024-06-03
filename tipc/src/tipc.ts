@@ -4,9 +4,9 @@ import {
   ActionFunction,
 } from "./types"
 
-const createChainFns = <TInput = void>() => {
+const createChainFns = <TInput extends object>() => {
   return {
-    input<TInput>() {
+    input<TInput extends object>() {
       return createChainFns<TInput>()
     },
 
@@ -21,7 +21,7 @@ const createChainFns = <TInput = void>() => {
 const tipc = {
   create() {
     return {
-      procedure: createChainFns<void>(),
+      procedure: createChainFns(),
     }
   },
 }

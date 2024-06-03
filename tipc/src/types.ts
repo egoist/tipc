@@ -2,17 +2,17 @@ export type ActionContext = {
   sender: Electron.WebContents
 }
 
-export type ActionPromiseFunction<TInput = void, TResult = any> = (args: {
+export type ActionPromiseFunction<TInput = any, TResult = any> = (args: {
   context: ActionContext
   input: TInput
 }) => Promise<TResult>
 
-export type ActionGeneratorFunction<TInput = void, TResult = any> = (args: {
+export type ActionGeneratorFunction<TInput = any, TResult = any> = (args: {
   context: ActionContext
   input: TInput
 }) => AsyncGenerator<TResult, any, unknown>
 
-export type ActionFunction<TInput = void, TResult = any> =
+export type ActionFunction<TInput = any, TResult = any> =
   | ActionPromiseFunction<TInput, TResult>
   | ActionGeneratorFunction<TInput, TResult>
 
