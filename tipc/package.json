@@ -23,14 +23,17 @@
   },
   "exports": {
     "./main": {
+      "types": "./main/index.d.ts",
       "require": "./dist/main.cjs",
       "default": "./dist/main.js"
     },
     "./renderer": {
+      "types": "./renderer/index.d.ts",
       "require": "./dist/renderer.cjs",
       "default": "./dist/renderer.js"
     },
     "./react-query": {
+      "types": "./react-query/index.d.ts",
       "require": "./dist/react-query.cjs",
       "default": "./dist/react-query.js"
     }
