@@ -19,6 +19,11 @@ export const router = {
   readPkg: t.procedure.action(async () => {
     return fs.readFileSync("package.json", "utf-8")
   }),
+
+  readPkgStream: t.procedure.action(async function* () {
+    yield 1
+    yield "1"
+  }),
 }
 
 export type Router = typeof router
