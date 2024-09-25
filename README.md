@@ -161,7 +161,7 @@ Let's say you're using React, you can now listen to events in your component:
 import { handlers } from "./tipc"
 
 useEffect(() => {
-  const unlisten = handlers.helloFromMain.on((message) => {
+  const unlisten = handlers.helloFromMain.listen((message) => {
     console.log(message)
   })
 
