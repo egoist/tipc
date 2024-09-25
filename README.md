@@ -134,10 +134,10 @@ But you also need to listen to events in renderer:
 
 ```ts
 // renderer/tipc.ts
-import { createHandlers } from "@egoist/tipc/renderer"
+import { createEventHandlers } from "@egoist/tipc/renderer"
 import { RendererHandlers } from "../main/renderer-handlers"
 
-const handlers = createHandlers<RendererHandlers>({
+export const handlers = createHandlers<RendererHandlers>({
   // when using electron's ipcRenderer directly
   on: (channel, callback) => {
     window.ipcRenderer.on(channel, callback)
