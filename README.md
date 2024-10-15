@@ -137,7 +137,7 @@ But you also need to listen to events in renderer:
 import { createEventHandlers } from "@egoist/tipc/renderer"
 import { RendererHandlers } from "../main/renderer-handlers"
 
-export const handlers = createHandlers<RendererHandlers>({
+export const handlers = createEventHandlers<RendererHandlers>({
   // when using electron's ipcRenderer directly
   on: (channel, callback) => {
     window.ipcRenderer.on(channel, callback)
