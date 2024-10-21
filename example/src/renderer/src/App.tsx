@@ -1,14 +1,28 @@
 import Versions from "./components/Versions"
 import electronLogo from "./assets/electron.svg"
-import { client, handlers } from "./client"
+import { reactClient, handlers, client } from "./client"
 import { useEffect, useState } from "react"
 
+const run = async () => {
+  const stream = await client.readPkgStream()
+
+  const reader = stream.getReader()
+
+  while (true) {
+    const { value, done } = await reader.read()
+    if (done) {
+      break
+    }
+    console.log(value)
+  }
+}
+
 function App() {
-  const sumQuery = client.sum.useQuery({ a: 1, b: 2 })
-  const pkgQuery = client.readPkg.useQuery()
+  const sumQuery = reactClient.sum.useQuery({ a: 1, b: 2 })
+  const pkgQuery = reactClient.readPkg.useQuery()
   const [title, setTitle] = useState("")
 
-  const utils = client.useUtils()
+  const utils = reactClient.useUtils()
 
   useEffect(() => {
     const unsubscribe = handlers.setTitle.listen((title) => {
@@ -24,6 +38,10 @@ function App() {
       // throw new Error("not implemented")
       return window.navigator.userAgent
     })
+  }, [])
+
+  useEffect(() => {
+    run()
   }, [])
 
   return (

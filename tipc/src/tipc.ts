@@ -1,12 +1,16 @@
-import { ActionFunction } from "./types"
+import {
+  ActionGeneratorFunction,
+  ActionPromiseFunction,
+  ActionFunction,
+} from "./types"
 
-const createChainFns = <TInput>() => {
+const createChainFns = <TInput extends object>() => {
   return {
-    input<TInput>() {
+    input<TInput extends object>() {
       return createChainFns<TInput>()
     },
 
-    action: <TResult>(action: ActionFunction<TInput, TResult>) => {
+    action: <TResult, T extends ActionFunction<TInput, TResult>>(action: T) => {
       return {
         action,
       }
@@ -17,7 +21,7 @@ const createChainFns = <TInput>() => {
 const tipc = {
   create() {
     return {
-      procedure: createChainFns<void>(),
+      procedure: createChainFns(),
     }
   },
 }

@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
-import { RouterType } from "./types"
+import { ActionFunction, RouterType } from "./types"
 import { IpcRenderer } from "electron"
 
 export const createClient = <Router extends RouterType>({
@@ -66,18 +66,18 @@ export const createClient = <Router extends RouterType>({
 export type QueryClientFromRouter<Router extends RouterType> = {
   useUtils: () => UtilsFromRouter<Router>
 } & {
-  [K in keyof Router]: Router[K]["action"] extends (options: {
-    context: any
-    input: infer P
-  }) => Promise<infer R>
+  [K in keyof Router]: Router[K]["action"] extends ActionFunction<
+    infer P,
+    infer R
+  >
     ? {
         useMutation: (
           mutationOptions?: UseMutationOptions<R, Error, P>
         ) => UseMutationResult<R, Error, P>
 
         useQuery: (
-          variables: P,
-          queryOptions?: Omit<UseQueryOptions<R, Error, P>, "queryKey">
+          input: P extends object ? P : void,
+          options?: Omit<UseQueryOptions<R, Error, P>, "queryKey">
         ) => UseQueryResult<R, Error>
       }
     : never
