@@ -8,7 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
-import { Procedure, RouterType } from "./types"
+import { Procedure, RouterType } from "./types.js"
 import { IpcRenderer } from "electron"
 
 export const createClient = <Router extends RouterType>({

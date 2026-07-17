@@ -9,6 +9,7 @@
   ],
   "compilerOptions": {
     "composite": true,
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "strict": true,

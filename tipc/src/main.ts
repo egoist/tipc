@@ -5,8 +5,8 @@ import {
   RendererHandlers,
   RendererHandlersCaller,
   RouterType,
-} from "./types"
-import { tipc } from "./tipc"
+} from "./types.js"
+import { tipc } from "./tipc.js"
 
 export { tipc }
 
@@ -62,4 +62,4 @@ export const getRendererHandlers = <T extends RendererHandlers>(
   })
 }
 
-export * from "./types"
+export * from "./types.js"

@@ -4,7 +4,7 @@ import type {
   RouterType,
   RendererHandlers,
   RendererHandlersListener,
-} from "./types"
+} from "./types.js"
 
 export const createClient = <Router extends RouterType>({
   ipcInvoke,
