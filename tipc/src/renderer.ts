@@ -11,15 +11,17 @@ export const createClient = <Router extends RouterType>({
 }: {
   ipcInvoke: IpcRenderer["invoke"]
 }) => {
-  return new Proxy<ClientFromRouter<Router>>({} as any, {
-    get: (_, prop) => {
-      const invoke = (input: any) => {
-        return ipcInvoke(prop.toString(), input)
-      }
+  const createProxy = (path: string[]): any =>
+    new Proxy(() => {}, {
+      get: (_, prop) =>
+        typeof prop === "string"
+          ? createProxy([...path, prop])
+          : undefined,
 
-      return invoke
-    },
-  })
+      apply: (_, __, [input]) => ipcInvoke(path.join("."), input),
+    })
+
+  return createProxy([]) as ClientFromRouter<Router>
 }
 
 export const createEventHandlers = <T extends RendererHandlers>({

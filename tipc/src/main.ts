@@ -1,13 +1,35 @@
 import crypto from "node:crypto"
 import { WebContents, ipcMain } from "electron"
-import { RendererHandlers, RendererHandlersCaller, RouterType } from "./types"
+import {
+  Procedure,
+  RendererHandlers,
+  RendererHandlersCaller,
+  RouterType,
+} from "./types"
 import { tipc } from "./tipc"
 
 export { tipc }
 
-export const registerIpcMain = (router: RouterType) => {
+const flattenRouter = (
+  router: RouterType,
+  prefix = "",
+  routes: Record<string, Procedure> = {}
+) => {
   for (const [name, route] of Object.entries(router)) {
-    ipcMain.handle(name, (e, payload) => {
+    const channel = prefix ? `${prefix}.${name}` : name
+
+    if (typeof (route as Procedure).action === "function") {
+      routes[channel] = route as Procedure
+    } else {
+      flattenRouter(route as RouterType, channel, routes)
+    }
+  }
+  return routes
+}
+
+export const registerIpcMain = (router: RouterType) => {
+  for (const [channel, route] of Object.entries(flattenRouter(router))) {
+    ipcMain.handle(channel, (e, payload) => {
       return route.action({ context: { sender: e.sender }, input: payload })
     })
   }

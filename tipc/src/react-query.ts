@@ -1,4 +1,5 @@
 import {
+  QueryClient,
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
@@ -7,7 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
-import { RouterType } from "./types"
+import { Procedure, RouterType } from "./types"
 import { IpcRenderer } from "electron"
 
 export const createClient = <Router extends RouterType>({
@@ -15,86 +16,113 @@ export const createClient = <Router extends RouterType>({
 }: {
   ipcInvoke: IpcRenderer["invoke"]
 }) => {
-  return new Proxy<QueryClientFromRouter<Router>>({} as any, {
-    get: (_, prop) => {
-      const invoke = (input: any) => {
-        return ipcInvoke(prop.toString(), input)
-      }
+  const createUtilsProxy = (queryClient: QueryClient, path: string[]): any =>
+    new Proxy(
+      {},
+      {
+        get: (_, prop) => {
+          if (typeof prop !== "string") return undefined
 
-      if (prop === "useUtils") {
-        return () => {
-          const queryClient = useQueryClient()
-
-          return new Proxy(
-            {},
-            {
-              get: (_, prop) => {
-                return {
-                  setQueryData: (variables: unknown, updater: unknown) => {
-                    return queryClient.setQueryData(
-                      [prop.toString(), variables],
-                      updater
-                    )
-                  },
-                }
-              },
+          if (prop === "setQueryData") {
+            return (variables: unknown, updater: unknown) => {
+              return queryClient.setQueryData([path.join("."), variables], updater)
             }
-          )
-        }
-      }
+          }
 
-      return {
-        useMutation: (mutationOptions?: any) => {
-          return useMutation({
-            ...mutationOptions,
-            mutationFn: invoke,
-          })
-        },
-
-        useQuery: (variables: any, queryOptions?: any) => {
-          return useQuery({
-            ...queryOptions,
-            queryKey: [prop.toString(), variables],
-            queryFn: () => invoke(variables),
-          })
+          return createUtilsProxy(queryClient, [...path, prop])
         },
       }
-    },
-  })
+    )
+
+  const createProxy = (path: string[]): any =>
+    new Proxy(
+      {},
+      {
+        get: (_, prop) => {
+          if (typeof prop !== "string") return undefined
+
+          if (path.length === 0 && prop === "useUtils") {
+            return () => {
+              const queryClient = useQueryClient()
+
+              return createUtilsProxy(queryClient, [])
+            }
+          }
+
+          const channel = path.join(".")
+          const invoke = (input: any) => {
+            return ipcInvoke(channel, input)
+          }
+
+          if (prop === "useMutation") {
+            return (mutationOptions?: any) => {
+              return useMutation({
+                ...mutationOptions,
+                mutationFn: invoke,
+              })
+            }
+          }
+
+          if (prop === "useQuery") {
+            return (variables: any, queryOptions?: any) => {
+              return useQuery({
+                ...queryOptions,
+                queryKey: [channel, variables],
+                queryFn: () => invoke(variables),
+              })
+            }
+          }
+
+          return createProxy([...path, prop])
+        },
+      }
+    )
+
+  return createProxy([]) as QueryClientFromRouter<Router>
 }
 
 export type QueryClientFromRouter<Router extends RouterType> = {
   useUtils: () => UtilsFromRouter<Router>
-} & {
-  [K in keyof Router]: Router[K]["action"] extends (options: {
-    context: any
-    input: infer P
-  }) => Promise<infer R>
-    ? {
-        useMutation: (
-          mutationOptions?: UseMutationOptions<R, Error, P>
-        ) => UseMutationResult<R, Error, P>
+} & QueryHooksFromRouter<Router>
 
-        useQuery: (
-          variables: P,
-          queryOptions?: Omit<UseQueryOptions<R, Error, P>, "queryKey">
-        ) => UseQueryResult<R, Error>
-      }
+export type QueryHooksFromRouter<Router extends RouterType> = {
+  [K in keyof Router]: Router[K] extends Procedure
+    ? Router[K]["action"] extends (options: {
+        context: any
+        input: infer P
+      }) => Promise<infer R>
+      ? {
+          useMutation: (
+            mutationOptions?: UseMutationOptions<R, Error, P>
+          ) => UseMutationResult<R, Error, P>
+
+          useQuery: (
+            variables: P,
+            queryOptions?: Omit<UseQueryOptions<R, Error, P>, "queryKey">
+          ) => UseQueryResult<R, Error>
+        }
+      : never
+    : Router[K] extends RouterType
+    ? QueryHooksFromRouter<Router[K]>
     : never
 }
 
 export type UtilsFromRouter<Router extends RouterType> = {
-  [K in keyof Router]: Router[K]["action"] extends (options: {
-    context: any
-    input: infer P
-  }) => Promise<infer R>
-    ? {
-        setQueryData: (
-          variables: P,
-          updater: R | ((prev: R | undefined) => R | undefined)
-        ) => void
+  [K in keyof Router]: Router[K] extends Procedure
+    ? Router[K]["action"] extends (options: {
+        context: any
+        input: infer P
+      }) => Promise<infer R>
+      ? {
+          setQueryData: (
+            variables: P,
+            updater: R | ((prev: R | undefined) => R | undefined)
+          ) => void
 
-        removeQueryCache: (variables: P) => void
-      }
+          removeQueryCache: (variables: P) => void
+        }
+      : never
+    : Router[K] extends RouterType
+    ? UtilsFromRouter<Router[K]>
     : never
 }

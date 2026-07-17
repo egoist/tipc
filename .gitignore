@@ -5,3 +5,4 @@ out
 types
 .DS_Store
 *.log
+*.tsbuildinfo

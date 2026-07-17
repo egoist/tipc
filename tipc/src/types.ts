@@ -7,14 +7,22 @@ export type ActionFunction<TInput = any, TResult = any> = (args: {
   input: TInput
 }) => Promise<TResult>
 
-export type RouterType = Record<string, { action: ActionFunction }>
+export type Procedure = { action: ActionFunction }
+
+export type RouterType = {
+  [key: string]: Procedure | RouterType
+}
 
 export type ClientFromRouter<Router extends RouterType> = {
-  [K in keyof Router]: Router[K]["action"] extends (options: {
-    context: any
-    input: infer P
-  }) => Promise<infer R>
-    ? (input: P) => Promise<R>
+  [K in keyof Router]: Router[K] extends Procedure
+    ? Router[K]["action"] extends (options: {
+        context: any
+        input: infer P
+      }) => Promise<infer R>
+      ? (input: P) => Promise<R>
+      : never
+    : Router[K] extends RouterType
+    ? ClientFromRouter<Router[K]>
     : never
 }
 

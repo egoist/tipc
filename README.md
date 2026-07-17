@@ -18,13 +18,13 @@ import { tipc } from "@egoist/tipc/main"
 
 const t = tipc.create()
 
-export const router = {
+export const router = t.router({
   sum: t.procedure
     .input<{ a: number; b: number }>()
     .action(async ({ input }) => {
       return input.a + input.b
     }),
-}
+})
 
 export type Router = typeof router
 ```
@@ -93,16 +93,49 @@ sumQuery.data // 3 or undefined
 sumQuery.isLoading // boolean
 ```
 
+### Merging routers
+
+You can define procedures in separate routers and merge them into a single router by nesting them, just like tRPC:
+
+```ts
+const userRouter = t.router({
+  greeting: t.procedure.input<{ name: string }>().action(async ({ input }) => {
+    return `Hello, ${input.name}`
+  }),
+})
+
+const postRouter = t.router({
+  create: t.procedure.input<{ title: string }>().action(async ({ input }) => {
+    return { id: 1, title: input.title }
+  }),
+})
+
+export const router = t.router({
+  user: userRouter,
+  post: postRouter,
+})
+
+export type Router = typeof router
+```
+
+Nested procedures are available on the client under their namespace:
+
+```ts
+client.user.greeting({ name: "world" })
+// with react-query:
+client.post.create.useMutation()
+```
+
 ### Access `sender` in TIPC methods
 
 ```ts
-export const router = {
+export const router = t.router({
   hello: t.procedure.action(async ({ context }) => {
     // sender is a WebContents instance that is calling this method
     context.sender.send("some-event")
     return `Hello, ${input.name}`
   }),
-}
+})
 ```
 
 ## Calling renderer from main

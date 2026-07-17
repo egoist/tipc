@@ -4,7 +4,7 @@ import { client, handlers } from "./client"
 import { useEffect, useState } from "react"
 
 function App() {
-  const sumQuery = client.sum.useQuery({ a: 1, b: 2 })
+  const sumQuery = client.math.sum.useQuery({ a: 1, b: 2 })
   const pkgQuery = client.readPkg.useQuery()
   const [title, setTitle] = useState("")
 
@@ -37,7 +37,7 @@ function App() {
 
           <button
             onClick={() => {
-              utils.sum.setQueryData({ a: 1, b: 2 }, 666)
+              utils.math.sum.setQueryData({ a: 1, b: 2 }, 666)
             }}
           >
             set sum data

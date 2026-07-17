@@ -1,4 +1,4 @@
-import { ActionFunction } from "./types"
+import { ActionFunction, RouterType } from "./types"
 
 const createChainFns = <TInput>() => {
   return {
@@ -18,6 +18,10 @@ const tipc = {
   create() {
     return {
       procedure: createChainFns<void>(),
+
+      router<TRoutes extends RouterType>(routes: TRoutes) {
+        return routes
+      },
     }
   },
 }

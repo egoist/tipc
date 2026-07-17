@@ -1,3 +1,6 @@
 packages:
-- example
-- tipc
+  - example
+  - tipc
+allowBuilds:
+  electron: true
+  esbuild: true
